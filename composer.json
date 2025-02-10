@@ -1,0 +1,8 @@
+{
+    "name": "slevomat/rmq-test",
+    "type": "project",
+    "require": {
+        "bunny/bunny": "0.6.x-dev",
+        "tracy/tracy": "^2.10"
+    }
+}
