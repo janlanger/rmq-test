@@ -37,19 +37,20 @@ $client = new Bunny\Client([
 	'heartbeat' => 600,
 ]);
 
-
-/** @var Channel $channel */
-$channel = $client->channel();
-$channel->exchangeDeclare('test', durable: true);
-$channel->queueDeclare($queueName, durable: true);
-$channel->queueBind($queueName, 'test', $queueName);
-
-for ($i = 0; $i < 10; $i++) {
-	$channel->publish('test message content', exchange: 'test', routingKey: $queueName);
-}
-
-$consumerRouter = new ConsumerRouter($client);
-$consumerRouter->listen($queueName, 10);
+Loop::futureTick(async(function () use ($client, $queueName) {
+	/** @var Channel $channel */
+	$channel = $client->channel();
+	$channel->exchangeDeclare('test', durable: true);
+	$channel->queueDeclare($queueName, durable: true);
+	$channel->queueBind($queueName, 'test', $queueName);
+	
+	for ($i = 0; $i < 10; $i++) {
+		$channel->publish('test message content', exchange: 'test', routingKey: $queueName);
+	}
+	
+	$consumerRouter = new ConsumerRouter($client);
+	$consumerRouter->listen($queueName, 10);
+}));
 
 class ConsumerRouter
 {
