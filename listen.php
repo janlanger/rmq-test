@@ -78,7 +78,7 @@ class ConsumerRouter
 			$channel = $this->client->channel();
 			$channel->qos(0, $prefetchCount);
 			$publishChannel = null;
-			$channel->consume(function (BunnyMessage $bunnyMessage, Channel $channel) use (&$publishChannel, $queueName): void {
+			$channel->consume(async(function (BunnyMessage $bunnyMessage, Channel $channel) use (&$publishChannel, $queueName): void {
 
 				try {
 					try {
@@ -121,7 +121,7 @@ class ConsumerRouter
 					$this->stopConsumer();
 					throw $e;
 				}
-			}, $queueName);
+			}), $queueName);
 
 			$this->writeln(sprintf('Listening on queue %s', $queueName));
 			$this->writeln('Waiting for messages...');
